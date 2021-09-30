@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+
+app_name = 'polls' #하드 코딩된 url제거용가리
 urlpatterns = [
     # /polls/
     path('', views.index, name='index'),
