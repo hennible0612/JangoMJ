@@ -1,3 +1,7 @@
+{% load static %} <!-- static 파일을 사용하기 위해서 load해야한다 -->
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}"> <!--rel=현문서와 외부리소스의 연관관계 type=외부미디어타입 -->
+
+
 <h1>{{ question.subject }}</h1>
 
 <div>
