@@ -54,6 +54,7 @@ def answer_create(request, question_id): #호출시 answer을 Post을 통해 가
     context = {'question': question, 'form': form}
     return render(request, 'pybo/question_detail.html', context)
 
+
 def question_create(request):
     """
     pybo 질문등록
