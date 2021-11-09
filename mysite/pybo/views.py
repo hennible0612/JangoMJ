@@ -3,6 +3,8 @@ from .models import Question, Answer
 from django.utils import timezone
 from .forms import QuestionForm, AnswerForm
 from django.core.paginator import Paginator #목록이 너무 많아 페이지 사용시 사용
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 def index(request): #return  render를 통해 question_list.html을 필요한 내용을 주고 render
@@ -33,6 +35,7 @@ def detail(request, question_id): #호출 시 render를 통해 question_detail.h
     context = {'question':question}
     return render(request, 'pybo/question_detail.html', context)
 
+@login_required(login_url='common:login') #로그인이 안되어있으면 자동으로 로그인 화면으로이동
 def answer_create(request, question_id): #호출시 answer을 Post을 통해 가져오고 rediredct로 pybo에 detail 호출
     """
     pybo 답변등록
@@ -45,6 +48,7 @@ def answer_create(request, question_id): #호출시 answer을 Post을 통해 가
         form = AnswerForm(request.POST)
         if form.is_valid():
             answer = form.save(commit=False)
+            answer.author = request.user # author 속성에 로그인 계정 저장
             answer.create_date = timezone.now()
             answer.question = question
             answer.save()
@@ -54,7 +58,7 @@ def answer_create(request, question_id): #호출시 answer을 Post을 통해 가
     context = {'question': question, 'form': form}
     return render(request, 'pybo/question_detail.html', context)
 
-
+@login_required(login_url='common:login') #로그인이 안되어있으면 자동으로 로그인 화면으로이동
 def question_create(request):
     """
     pybo 질문등록
