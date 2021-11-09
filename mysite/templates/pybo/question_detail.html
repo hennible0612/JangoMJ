@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container my-3">
+    <!-- 사용자오류 표시 -->
+    {% if messages %}
+    <div class="alert alert-danger my-3" role="alert">
+    {% for message in messages %}
+        <strong>{{ message.tags }}</strong>
+        <ul><li>{{ message.message }}</li></ul>
+    {% endfor %}
+    </div>
+    {% endif %}
     <h2 class="border-bottom py-2">{{ question.subject }}</h2>
     <div class="card my-3">
         <div class="card-body">
@@ -11,8 +20,19 @@
                     <div>{{ question.create_date }}</div>
                 </div>
             </div>
+            {% if request.user == question.author %}
+            <div class="my-3">
+                <a href="{% url 'pybo:question_modify' question.id  %}"
+                   class="btn btn-sm btn-outline-secondary">수정</a><!-- 수정버튼은 로그인한 사용자와 글쓴이가 동일할 경우에만 노툴 -->
+                    <!-- href ="#"은 data-uri이다. 이렇게 한이유는 삭제버튼 클릭시 진짜 삭제하겠냐고 물어보기 위함이다. -->
+                    <!-- 그리고 버튼이 눌리는 이벤트를 확인할수 있도록 class 속성에 delete 항목을 추가해 주었다. -->
+                    <a href="#" class="delete btn btn-sm btn-outline-secondary"
+                    data-uri="{% url 'pybo:question_delete' question.id  %}">삭제</a>
+            </div>
+            {% endif %}
         </div>
     </div>
+
     <h5 class="border-bottom my-3 py-2">{{question.answer_set.count}}개의 답변이 있습니다.</h5>
     {% for answer in question.answer_set.all %}
     <div class="card my-3">
@@ -47,4 +67,15 @@
         <input type="submit" value="답변등록" class="btn btn-primary">
     </form>
 </div>
+{% endblock %}
+{% block script %}
+<script type='text/javascript'>
+$(document).ready(function(){
+    $(".delete").on('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = $(this).data('uri');
+        }
+    });
+});
+</script>
 {% endblock %}
