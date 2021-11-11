@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, Count
 from ..models import Question
 
 def index(request): #return  render를 통해 question_list.html을 필요한 내용을 주고 render
@@ -11,8 +11,11 @@ def index(request): #return  render를 통해 question_list.html을 필요한 �
     # 입력 파라미터
     page = request.GET.get('page',1) # 페이지
     kw = request.GET.get('kw', '')  # 검색어
+    so = request.GET.get('so','recent') # 정렬기준
 
     question_list = Question.objects.order_by('-create_date')
+
+    # question_list = Question.objects.order_by('-create_date')
     # context = {'question_list': question_list} #페이징 처리 하기전
     if kw:
         question_list = question_list.filter(
@@ -26,7 +29,7 @@ def index(request): #return  render를 통해 question_list.html을 필요한 �
     paginator = Paginator(question_list, 10) #페이지당 10개
     page_obj = paginator.get_page(page) #paginator를 이용하여 요청된 페이지에 해당되는 page_obj 를 생성
     # https://wikidocs.net/71240 page_obj에 다양한 속성들 있음
-    context = {'question_list':page_obj, 'page': page, 'kw': kw}
+    context = {'question_list':page_obj, 'page': page, 'kw': kw, 'so':so}
 
     return render(request, 'pybo/question_list.html', context)
 
